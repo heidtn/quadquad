@@ -11,6 +11,17 @@ import sys
 ser = None
 
 
+servomap = {
+	'BLHip': 0,
+	'BRHip': 1,
+	'FLHip': 2,
+	'FRHip': 3,
+	'BLLeg': 4,
+	'BRLeg': 5,
+	'FLLeg': 6,
+	'FRLeg': 7
+}
+
 def set_speed(n, speed):
 	#Quick check that things are in range
 	if speed > 127 or speed <0:
@@ -48,8 +59,16 @@ def initiate_serial():
 	ser.baudrate = 38400	
 
 def handle_msg(servoMsg):
-	rospy.loginfo(rospy.get_caller_id() + "new servo command: " + data.data)
+	rospy.loginfo(rospy.get_caller_id() + "new servo command")
+	set_pos(servomap['BLHip'], servoMsg.BLHip)
+	set_pos(servomap['BRHip'], servoMsg.BRHip)
+	set_pos(servomap['FLHip'], servoMsg.FLHip)
+	set_pos(servomap['FRHip'], servoMsg.FRHip)
 
+	set_pos(servomap['BLLeg'], servoMsg.BLLeg)
+	set_pos(servomap['BRLeg'], servoMsg.BRLeg)
+	set_pos(servomap['FLLeg'], servoMsg.FLLeg)
+	set_pos(servomap['FRLeg'], servoMsg.FRLeg)
 
 def create_listener_node():
 	rospy.init_node('quad_servo_controller')
