@@ -1,0 +1,9 @@
+Header header
+int32 FLHip
+int32 FRHip
+int32 BLHip
+int32 BRHip
+int32 FLLeg
+int32 FRLeg
+int32 BLLeg
+int32 BRLeg
