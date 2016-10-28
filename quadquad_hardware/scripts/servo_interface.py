@@ -55,7 +55,7 @@ def initiate_serial():
 		print("no com ports found")
 		rospy.logerr("ERROR: no com ports found")
 		raise
-	port = ports[0].name
+	port = ports[0].device
 	ser = serial.Serial(port)
 	print("using port: ", port)
 	ser.baudrate = 38400	
