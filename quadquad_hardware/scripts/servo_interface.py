@@ -55,7 +55,8 @@ def initiate_serial():
 		print("no com ports found")
 		rospy.logerr("ERROR: no com ports found")
 		raise
-	ser = serial.Serial(0)
+	ser = serial.Serial(ports[0])
+	print("using port: ", ports[0])
 	ser.baudrate = 38400	
 
 def handle_msg(servoMsg):
