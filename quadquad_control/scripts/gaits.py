@@ -83,20 +83,22 @@ class CreepGait(Gait):
 
   def get_next_position(self, curtime, speed, direction):
     msg = QuadServos()
-    if speed == 0 and direction == 0:
-      msg.BLHip = 90.0
-      msg.BRHip = 90.0
-      msg.FLHip = 90.0
-      msg.FRHip = 90.0
 
-      msg.BLLeg = 0.0
-      msg.BRLeg = 0.0
-      msg.FLLeg = 0.0
-      msg.FRLeg = 0.0
+    msg.BLHip = 90.0
+    msg.BRHip = 90.0
+    msg.FLHip = 90.0
+    msg.FRHip = 90.0
+
+    msg.BLLeg = 90.0
+    msg.BRLeg = 90.0
+    msg.FLLeg = 90.0
+    msg.FRLeg = 90.0
+
+    if speed == 0 and direction == 0:
       return msg
 
-    msg.FRHip = self.hip[self.index % len(self.hip)]
-    msg.FRLeg = self.leg[self.index % len(self.leg)]
+    msg.FLHip = self.hip[self.index % len(self.hip)]*40. + 70
+    msg.FLLeg = self.leg[self.index % len(self.leg)]*40. + 70
 
     self.index += 1
 

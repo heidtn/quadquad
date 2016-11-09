@@ -10,15 +10,14 @@ import sys
 
 ser = None
 
-
 servomap = {
 	'BLHip': 0,
-	'BRHip': 1,
-	'FLHip': 2,
-	'FRHip': 3,
-	'BLLeg': 4,
-	'BRLeg': 5,
-	'FLLeg': 6,
+	'BRHip': 2,
+	'FLHip': 5,
+	'FRHip': 6,
+	'BLLeg': 1,
+	'BRLeg': 3,
+	'FLLeg': 4,
 	'FRLeg': 7
 }
 
