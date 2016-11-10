@@ -11,15 +11,17 @@ import sys
 ser = None
 
 servomap = {
-	'BLHip': 0,
-	'BRHip': 2,
-	'FLHip': 5,
-	'FRHip': 6,
-	'BLLeg': 1,
-	'BRLeg': 3,
-	'FLLeg': 4,
-	'FRLeg': 7
+	'BLHip': [0,-1],
+	'BRHip': [2, 1],
+	'FLHip': [5,-1],
+	'FRHip': [6, 1],
+	'BLLeg': [1, 1],
+	'BRLeg': [3,-1],
+	'FLLeg': [4,-1],
+	'FRLeg': [7, 1]
 }
+
+speed = 20
 
 def set_speed(n, speed):
 	#Quick check that things are in range
@@ -31,11 +33,15 @@ def set_speed(n, speed):
 	bud=chr(0x80)+chr(0x01)+chr(0x01)+chr(n)+chr(speed)
 	ser.write(bud)
 
-def set_pos(n, angle):
+def set_pos(n, angle, direction):
 	#Check that things are in range
 	if angle > 180 or angle <0:
-		angle=90
+		angle=90.0
 		rospy.loginfo("WARNING: Bad angle. Setting angle to 90 degrees to be safe...")
+
+	#Check direction of limb
+	if direction == -1:
+		angle = 180 - angle
 
 	#Valid range is 500-5500
 	offyougo=int(5000*angle/180)+500
@@ -49,27 +55,32 @@ def set_pos(n, angle):
 	ser.write(bud)
 
 def initiate_serial():
+	global ser
 	ports = list_ports.comports()
 	if(len(ports) == 0):
 		print("no com ports found")
 		rospy.logerr("ERROR: no com ports found")
 		raise
 	port = ports[0].device
+	port = '/dev/ttyS0' #rpi serial port doesn't enumerate properly on pi3
 	ser = serial.Serial(port)
 	print("using port: ", port)
 	ser.baudrate = 38400	
 
+	for i in servomap:
+		set_speed(servomap[i][0], speed)
+
 def handle_msg(servoMsg):
 	rospy.loginfo(rospy.get_caller_id() + "new servo command")
-	set_pos(servomap['BLHip'], servoMsg.BLHip)
-	set_pos(servomap['BRHip'], servoMsg.BRHip)
-	set_pos(servomap['FLHip'], servoMsg.FLHip)
-	set_pos(servomap['FRHip'], servoMsg.FRHip)
+	set_pos(servomap['BLHip'][0], servoMsg.BLHip, servomap['BLHip'][1])
+	set_pos(servomap['BRHip'][0], servoMsg.BRHip, servomap['BRHip'][1])
+	set_pos(servomap['FLHip'][0], servoMsg.FLHip, servomap['FLHip'][1])
+	set_pos(servomap['FRHip'][0], servoMsg.FRHip, servomap['FRHip'][1])
 
-	set_pos(servomap['BLLeg'], servoMsg.BLLeg)
-	set_pos(servomap['BRLeg'], servoMsg.BRLeg)
-	set_pos(servomap['FLLeg'], servoMsg.FLLeg)
-	set_pos(servomap['FRLeg'], servoMsg.FRLeg)
+	set_pos(servomap['BLLeg'][0], servoMsg.BLLeg, servomap['BLLeg'][1])
+	set_pos(servomap['BRLeg'][0], servoMsg.BRLeg, servomap['BRLeg'][1])
+	set_pos(servomap['FLLeg'][0], servoMsg.FLLeg, servomap['FLLeg'][1])
+	set_pos(servomap['FRLeg'][0], servoMsg.FRLeg, servomap['FRLeg'][1])
 
 def create_listener_node():
 	rospy.init_node('quad_servo_controller')
