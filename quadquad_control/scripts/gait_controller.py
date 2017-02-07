@@ -5,13 +5,14 @@ from std_msgs.msg import Header
 from quadquad_hardware.msg import QuadServos
 from geometry_msgs.msg import Twist
 
-from threading import Thread
+from threading import Thread, Lock
 
 from gaits import CreepGait
 
 speed = 0.0
 direction = 0.0
 
+lock = Lock()
 
 def move_quad_thread():
   global speed
@@ -25,17 +26,28 @@ def move_quad_thread():
   gait_controller = CreepGait()
 
   while not rospy.is_shutdown():
-    #for testing only
-    msg = gait_controller.get_next_position(0, 1.0, 0.0)
+    lock.acquire()
+    spd = speed
+    dr = direction
+    lock.release()
+    msg = gait_controller.get_next_position(0, spd, dr)
     pub.publish(msg)
     rate.sleep()
 
 def handle_msg(gaitMsg):
+  global speed
+  global direction
   rospy.loginfo(rospy.get_caller_id() + "new control command")
+  lock.acquire()
+  speed = gaitMsg.linear.x
+  direction = gaitMsg.angular.z
+  print speed, direction
+
+  lock.release()
 
 
 def create_listener_node():
-  rospy.Subscriber('gait_controller', Twist, handle_msg)
+  rospy.Subscriber('cmd_vel', Twist, handle_msg)
   rospy.loginfo(rospy.get_caller_id() + " created listener")
   rospy.spin()
     
