@@ -1,0 +1,45 @@
+# Publish all joint states -----------------------------------
+joint_state_controller:
+  type: joint_state_controller/JointStateController
+  publish_rate: 50  
+
+# Position Controllers ---------------------------------------
+flHip_position_controller:
+  type: position_controllers/JointPositionController
+  joint: flHip_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+frHip_position_controller:
+  type: position_controllers/JointPositionController
+  joint: frHip_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+blHip_position_controller:
+  type: position_controllers/JointPositionController
+  joint: blHip_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+brHip_position_controller:
+  type: position_controllers/JointPositionController
+  joint: brHip_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+flLeg_position_controller:
+  type: position_controllers/JointPositionController
+  joint: flLeg_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+frLeg_position_controller:
+  type: position_controllers/JointPositionController
+  joint: frLeg_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+
+blLeg_position_controller:
+  type: position_controllers/JointPositionController
+  joint: blLeg_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}
+  
+brLeg_position_controller:
+  type: position_controllers/JointPositionController
+  joint: brLeg_joint
+  pid: {p: 100.0, i: 0.01, d: 10.0}

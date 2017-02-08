@@ -1,0 +1,302 @@
+<?xml version="1.0"?>
+<!-- Revolute-Revolute Manipulator -->
+<robot name="quadquad" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="PI" value="3.1415926535897931"/>
+  <xacro:property name="mass" value=".1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="height" value=".02" /> 
+  <xacro:property name="camera_link" value="0.02" /> <!-- Size of square 'camera' box -->
+
+  <xacro:property name="bodyL" value="0.12" /> 
+  <xacro:property name="bodyW" value="0.02" /> 
+  <xacro:property name="bodyD" value="0.01" /> 
+
+  <xacro:property name="hipL" value="0.05" /> 
+  <xacro:property name="hipW" value="0.02" /> 
+  <xacro:property name="hipD" value="0.01" /> 
+
+  <xacro:property name="hipJointOffsetX" value="0.03" /> 
+  <xacro:property name="hipJointOffsetY" value="0.05" /> 
+
+  <xacro:property name="max_vel" value="4" />
+
+  <xacro:property name="legL" value="0.08" /> 
+  <xacro:property name="legR" value="0.01" /> 
+
+  <xacro:property name="servoeffort" value="300" /> 
+
+
+
+  <!-- Import all Gazebo-customization elements, including Gazebo colors -->
+  <xacro:include filename="$(find quadquad_design)/design/quadquad.gazebo" />
+
+  <!-- Import Rviz colors -->
+  <xacro:include filename="$(find quadquad_design)/design/materials.xacro" />
+
+
+  <!-- Base Link -->
+  <link name="body">
+    <collision>
+      <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${bodyW} ${bodyL} ${bodyD}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+      <geometry>
+	       <box size="${bodyW} ${bodyL} ${bodyD}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="0 0 ${height}" rpy="0 0 0"/>
+      <mass value="${mass}"/>
+      <inertia
+    	  ixx="${mass / 12.0 * (hipW*hipW + bodyL*bodyL)}" ixy="0.0" ixz="0.0"
+    	  iyy="${mass / 12.0 * (bodyL*bodyL + hipW*hipW)}" iyz="0.0"
+    	  izz="${mass / 12.0 * (hipW*hipW + hipW*hipW)}"/>
+    </inertial>
+  </link>
+
+  <!-- Camera link -->
+  <joint name="camera_joint" type="fixed">
+    <axis xyz="0 0 0" />
+    <origin xyz="0 ${bodyL/2} ${height}" rpy="0 0 0"/>
+    <parent link="body"/>
+    <child link="camera_link"/>
+  </joint>
+
+  <!-- Camera -->
+
+  <link name="camera_link">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+         <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+         <box size="${camera_link} ${camera_link} ${camera_link}"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+
+
+<!-- hips -->
+  <!-- flHip -->
+  <!--${hipJointOffsetX + hipL/2} ${hipJointOffsetY + hipW/2} ${height}-->
+  <link name="flHip">
+    <collision>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+      <inertia
+        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+    </inertial>
+  </link>
+
+  <joint name="flHip_joint" type="revolute">
+    <parent link="body"/>
+    <child link="flHip"/>
+    <origin xyz="${-hipJointOffsetX} ${hipJointOffsetY} ${height}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
+    <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+  </joint>
+
+
+    <!-- frHip -->
+  <!--${hipJointOffsetX + hipL/2} ${hipJointOffsetY + hipW/2} ${height}-->
+  <link name="frHip">
+    <collision>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+      <inertia
+        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+    </inertial>
+  </link>
+
+  <joint name="frHip_joint" type="revolute">
+    <parent link="body"/>
+    <child link="frHip"/>
+    <origin xyz="${hipJointOffsetX} ${hipJointOffsetY} ${height}" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <dynamics damping="0.7"/>
+    <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+  </joint>
+
+
+  <!-- blHip -->
+  <!--${hipJointOffsetX + hipL/2} ${hipJointOffsetY + hipW/2} ${height}-->
+  <link name="blHip">
+    <collision>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+      <inertia
+        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+    </inertial>
+  </link>
+
+  <joint name="blHip_joint" type="revolute">
+    <parent link="body"/>
+    <child link="blHip"/>
+    <origin xyz="${-hipJointOffsetX} ${-hipJointOffsetY} ${height}" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <dynamics damping="0.7"/>
+    <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+  </joint>
+
+
+  <!-- flHip -->
+  <!--${hipJointOffsetX + hipL/2} ${hipJointOffsetY + hipW/2} ${height}-->
+  <link name="brHip">
+    <collision>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${hipL} ${hipW} ${hipD}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+
+    <inertial>
+      <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+      <inertia
+        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+    </inertial>
+  </link>
+
+  <joint name="brHip_joint" type="revolute">
+    <parent link="body"/>
+    <child link="brHip"/>
+    <origin xyz="${hipJointOffsetX} ${-hipJointOffsetY} ${height}" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <dynamics damping="0.7"/>
+    <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+  </joint>
+
+
+
+
+
+  <!-- actuators -->
+
+  <transmission name="tran1">
+    <type>position_controllers/JointPositionController</type>
+    <joint name="flHip_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor1">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran2">
+    <type>position_controllers/JointPositionController</type>
+    <joint name="frHip_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor2">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran3">
+    <type>position_controllers/JointPositionController</type>
+    <joint name="blHip_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor3">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran4">
+    <type>position_controllers/JointPositionController</type>
+    <joint name="brHip_joint">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor4">
+      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+</robot>

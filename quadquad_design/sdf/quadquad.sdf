@@ -1,0 +1,277 @@
+ <?xml version='1.0'?>
+    <sdf version='1.6'>
+      <model name="simplebot">
+        <static>false</static>
+
+
+
+        <link name='base_link'>
+          <pose>0 0 0 0 0 0</pose>
+
+          <inertial>
+            <mass>10</mass>
+            <inertia>
+              <ixx>0.166667</ixx>
+              <ixy>0</ixy>
+              <ixz>0</ixz>
+            <iyy>0.166667</iyy>
+              <iyz>0</iyz>
+              <izz>0.166667</izz>
+            </inertia>
+            <pose frame=''>0 0 0 0 -0 0</pose>
+          </inertial>
+
+          <collision name='collision'>
+            <geometry>
+              <box>
+                <size>.02 0.12 .01</size>
+              </box>
+            </geometry>
+          </collision>
+
+          <visual name='visual'>
+            <geometry>
+              <box>
+                <size>.02 0.12 .01</size>
+              </box>
+            </geometry>
+          </visual>
+
+          <!--
+          <collision name='caster_collision'>
+            <pose>0.15 0 -0.05 0 0 0</pose>
+            <geometry>
+              <sphere>
+              <radius>.05</radius>
+            </sphere>
+          </geometry>
+
+          <surface>
+            <friction>
+              <ode>
+                <mu>0</mu>
+                <mu2>0</mu2>
+                <slip1>1.0</slip1>
+                <slip2>1.0</slip2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+
+
+        <visual name='caster_visual'>
+          <pose>0.15 0 -0.05 0 0 0</pose>
+          <geometry>
+            <sphere>
+              <radius>.05</radius>
+            </sphere>
+          </geometry>
+        </visual>
+        -->
+
+        <sensor type="camera" name="camera1">
+          <pose>0 0 0 0 0 0</pose>
+          <visualize>false</visualize>
+          <update_rate>40</update_rate>
+          
+          <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+            <alwaysOn>true</alwaysOn>
+            <updateRate>0.0</updateRate>
+            <cameraName>/camera</cameraName>
+            <imageTopicName>image_raw</imageTopicName>
+            <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+            <frameName>camera_link</frameName>
+            <hackBaseline>0.07</hackBaseline>
+            <distortionK1>0.0</distortionK1>
+            <distortionK2>0.0</distortionK2>
+            <distortionK3>0.0</distortionK3>
+            <distortionT1>0.0</distortionT1>
+            <distortionT2>0.0</distortionT2>
+          </plugin>
+        </sensor>
+
+          <!--
+          <collision name='hokuyo_collision'>
+            <pose>0 0 .2 0 0 0</pose>
+            <geometry>
+              <box>
+                <size>.1 .1 .1</size>
+              </box>
+            </geometry>
+          </collision>
+
+          <visual name='hokuyo_visual'>
+            <pose>0 0 .1 0 0 0</pose>
+            <geometry>
+              <box>
+                <size>.1 .1 .1</size>
+              </box>
+            </geometry>
+          </visual>
+        -->
+
+      </link>
+
+      <!--
+      <link name="left_wheel">
+        <pose>-0.1 0.13 0.1 0 1.5707 1.5707</pose>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>.1</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>.1</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+           <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Yellow</name>
+          </script>
+        </material>
+        </visual>
+      </link>
+
+        <link name="right_wheel">
+        <pose>-0.1 -0.13 0.1 0 1.5707 1.5707</pose>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>.1</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>.1</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+           <material>
+            <script>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+              <name>Gazebo/Yellow</name>
+            </script>
+          </material>
+        </visual>
+      </link>
+
+      <joint type="revolute" name="left_wheel_hinge">
+        <pose>0 0 -0.03 0 0 0</pose>
+        <child>left_wheel</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+
+      <joint type="revolute" name="right_wheel_hinge">
+        <pose>0 0 .03 0 0 0</pose>
+        <child>right_wheel</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+
+      <plugin name='differential_drive_controller' filename='libgazebo_ros_diff_drive.so'>
+        <alwaysOn>true</alwaysOn>
+        <updateRate>100</updateRate>
+        <leftJoint>left_wheel_hinge</leftJoint>
+        <rightJoint>right_wheel_hinge</rightJoint>
+        <wheelSeparation>0.39</wheelSeparation>
+        <wheelDiameter>0.15</wheelDiameter>
+        <torque>5</torque>
+        <legacyMode>false</legacyMode>
+        <commandTopic>cmd_vel</commandTopic>
+        <odometryTopic>odom</odometryTopic>
+        <odometryFrame>odom</odometryFrame>
+        <robotBaseFrame>base_link</robotBaseFrame>
+      </plugin>
+    -->
+
+    <link name="flHip">
+        <pose>-.055 .05 0 0 1.5708 0</pose>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>.005</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>.005</radius>
+              <length>.05</length>
+            </cylinder>
+          </geometry>
+           <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/Yellow</name>
+          </script>
+        </material>
+        </visual>
+      </link>
+
+      <joint type="revolute" name="flHip_joint">
+        <pose>-.03 .05 0 0 0 0</pose>
+        <child>flHip</child>
+        <parent>base_link</parent>
+        <axis>
+          <xyz>0 0 1</xyz>
+            <limit>
+            <lower>-2.61799</lower>
+            <upper>1.98395</upper>
+            <effort>300</effort>
+            <velocity>1</velocity>
+            </limit>
+            <dynamics>
+              <damping>50</damping>
+            </dynamics>
+        </axis>
+      </joint>
+
+
+
+
+      <!-- leg controller -->
+
+      <plugin name='leg_controller' filename='libgazebo_ros_control.so'>
+         <robotNamespace>/simplebot</robotNamespace>
+      </plugin>
+
+
+
+      <!-- world camera? -->
+
+      <joint name="fixed to ground" type="revolute">
+        <parent>base_link</parent>
+        <child>camera_link</child>
+        <axis>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+        </limit>
+        <xyz>0 0 1</xyz>
+        </axis>
+      </joint>
+
+  </model>
+</sdf>
+
+
+
+
+

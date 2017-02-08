@@ -1,0 +1,49 @@
+<launch>
+  
+  <!-- these are the arguments you can pass this launch file, for example paused:=true -->
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find quadquad_gazebo)/worlds/simpleworld.world"/>
+    <arg name="debug" value="$(arg debug)" />
+    <arg name="gui" value="$(arg gui)" />
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="headless" value="$(arg headless)"/>
+  </include>
+
+  <!-- Load the URDF into the ROS Parameter Server -->
+  <param name="robot_description"
+   command="$(find xacro)/xacro.py '$(find quadquad_design)/design/quadquad.xacro'" />
+
+  <!-- Run a python script to the send a service call to gazebo_ros to spawn a URDF robot -->
+  <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen"
+  args="-urdf -model quadquad -param robot_description"/>
+  
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find quadquad_design)/config/quad_joint_descriptor.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+  output="screen" args="joint_state_controller
+                        flHip_position_controller
+                        frHip_position_controller
+                        blHip_position_controller
+                        brHip_position_controller
+                        "/>
+
+  <!-- convert joint states to TF transforms for rviz, etc -->
+  <!--
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+  respawn="false" output="screen">
+    <remap from="/joint_states" to="/quadquad/joint_states" />
+  </node>
+  -->
+
+</launch>
+
