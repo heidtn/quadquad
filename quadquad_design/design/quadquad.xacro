@@ -1,10 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.6"?>
 <!-- Revolute-Revolute Manipulator -->
 <robot name="quadquad" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <!-- Constants for robot dimensions -->
   <xacro:property name="PI" value="3.1415926535897931"/>
-  <xacro:property name="mass" value=".1" /> <!-- arbitrary value for mass -->
+  <xacro:property name="mass" value="10" /> <!-- arbitrary value for mass -->
   <xacro:property name="height" value=".02" /> 
   <xacro:property name="camera_link" value="0.02" /> <!-- Size of square 'camera' box -->
 
@@ -18,6 +18,9 @@
 
   <xacro:property name="hipJointOffsetX" value="0.03" /> 
   <xacro:property name="hipJointOffsetY" value="0.05" /> 
+
+  <xacro:property name="legJointOffsetX" value="0.05" /> 
+  <xacro:property name="legJointOffsetY" value="0.00" /> 
 
   <xacro:property name="max_vel" value="4" />
 
@@ -56,16 +59,16 @@
       <origin xyz="0 0 ${height}" rpy="0 0 0"/>
       <mass value="${mass}"/>
       <inertia
-    	  ixx="${mass / 12.0 * (hipW*hipW + bodyL*bodyL)}" ixy="0.0" ixz="0.0"
-    	  iyy="${mass / 12.0 * (bodyL*bodyL + hipW*hipW)}" iyz="0.0"
-    	  izz="${mass / 12.0 * (hipW*hipW + hipW*hipW)}"/>
+    	  ixx="${mass / .1 * (hipW*hipW + bodyL*bodyL)}" ixy="0.0" ixz="0.0"
+    	  iyy="${mass / .1 * (bodyL*bodyL + hipW*hipW)}" iyz="0.0"
+    	  izz="${mass / .1 * (hipW*hipW + hipW*hipW)}"/>
     </inertial>
   </link>
 
   <!-- Camera link -->
   <joint name="camera_joint" type="fixed">
     <axis xyz="0 0 0" />
-    <origin xyz="0 ${bodyL/2} ${height}" rpy="0 0 0"/>
+    <origin xyz="0 ${bodyL/2} ${height}" rpy="0 0 ${PI/2}"/>
     <parent link="body"/>
     <child link="camera_link"/>
   </joint>
@@ -119,9 +122,9 @@
       <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
         <mass value="${mass}"/>
       <inertia
-        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
-        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
-        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+        ixx="${mass / .1 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / .1 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / .1 * (hipL*hipL + hipL*hipL)}"/>
     </inertial>
   </link>
 
@@ -157,9 +160,9 @@
       <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
         <mass value="${mass}"/>
       <inertia
-        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
-        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
-        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+        ixx="${mass / .1 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / .1 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / .1 * (hipL*hipL + hipL*hipL)}"/>
     </inertial>
   </link>
 
@@ -195,9 +198,9 @@
       <origin xyz="${-hipL/2} 0 0" rpy="0 0 0"/>
         <mass value="${mass}"/>
       <inertia
-        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
-        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
-        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+        ixx="${mass / .1 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / .1 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / .1 * (hipL*hipL + hipL*hipL)}"/>
     </inertial>
   </link>
 
@@ -211,7 +214,7 @@
   </joint>
 
 
-  <!-- flHip -->
+  <!-- brHip -->
   <!--${hipJointOffsetX + hipL/2} ${hipJointOffsetY + hipW/2} ${height}-->
   <link name="brHip">
     <collision>
@@ -233,9 +236,9 @@
       <origin xyz="${hipL/2} 0 0" rpy="0 0 0"/>
         <mass value="${mass}"/>
       <inertia
-        ixx="${mass / 12.0 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
-        iyy="${mass / 12.0 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
-        izz="${mass / 12.0 * (hipL*hipL + hipL*hipL)}"/>
+        ixx="${mass / .1 * (hipL*hipL + hipW*hipW)}" ixy="0.0" ixz="0.0"
+        iyy="${mass / .1 * (hipW*hipW + hipL*hipL)}" iyz="0.0"
+        izz="${mass / .1 * (hipL*hipL + hipL*hipL)}"/>
     </inertial>
   </link>
 
@@ -250,53 +253,245 @@
 
 
 
+  <!-- legs -->
+  <!-- flLeg -->
+  <link name="flLeg">
+      <collision>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+      </collision>
 
+      <visual>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+          <mass value="${mass}"/>
+        <inertia
+          ixx="${mass / .1 * (legL*legL + legR*legR)}" ixy="0.0" ixz="0.0"
+          iyy="${mass / .1 * (legR*legR + hipL*legL)}" iyz="0.0"
+          izz="${mass / .1 * (legL*legL + legL*legL)}"/>
+      </inertial>
+    </link>
+
+    <joint name="flLeg_joint" type="revolute">
+      <parent link="flHip"/>
+      <child link="flLeg"/>
+      <origin xyz="${-(legJointOffsetX)} ${legJointOffsetY} 0" rpy="0 0 0"/>
+      <axis xyz="0 -1 0"/>
+      <dynamics damping="0.7"/>
+      <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+    </joint>
+
+
+  <!-- frLeg -->
+  <link name="frLeg">
+      <collision>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+          <mass value="${mass}"/>
+        <inertia
+          ixx="${mass / .1 * (legL*legL + legR*legR)}" ixy="0.0" ixz="0.0"
+          iyy="${mass / .1 * (legR*legR + hipL*legL)}" iyz="0.0"
+          izz="${mass / .1 * (legL*legL + legL*legL)}"/>
+      </inertial>
+    </link>
+
+    <joint name="frLeg_joint" type="revolute">
+      <parent link="frHip"/>
+      <child link="frLeg"/>
+      <origin xyz="${(legJointOffsetX)} ${legJointOffsetY} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.7"/>
+      <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+    </joint>
+
+
+  <!-- blLeg -->
+  <link name="blLeg">
+      <collision>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="${-legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+          <mass value="${mass}"/>
+        <inertia
+          ixx="${mass / .1 * (legL*legL + legR*legR)}" ixy="0.0" ixz="0.0"
+          iyy="${mass / .1 * (legR*legR + hipL*legL)}" iyz="0.0"
+          izz="${mass / .1 * (legL*legL + legL*legL)}"/>
+      </inertial>
+    </link>
+
+    <joint name="blLeg_joint" type="revolute">
+      <parent link="blHip"/>
+      <child link="blLeg"/>
+      <origin xyz="${-(legJointOffsetX)} ${-legJointOffsetY} 0" rpy="0 0 0"/>
+      <axis xyz="0 -1 0"/>
+      <dynamics damping="0.7"/>
+      <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+    </joint>
+
+
+  <!-- brLeg -->
+  <link name="brLeg">
+      <collision>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+      </collision>
+
+      <visual>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+        <geometry>
+          <cylinder length="${legL}" radius="${legR}"/>
+        </geometry>
+        <material name="black"/>
+      </visual>
+
+      <inertial>
+        <origin xyz="${legL/2} 0 0" rpy="0 ${PI/2} 0"/>
+          <mass value="${mass}"/>
+        <inertia
+          ixx="${mass / .1 * (legL*legL + legR*legR)}" ixy="0.0" ixz="0.0"
+          iyy="${mass / .1 * (legR*legR + hipL*legL)}" iyz="0.0"
+          izz="${mass / .1 * (legL*legL + legL*legL)}"/>
+      </inertial>
+    </link>
+
+    <joint name="brLeg_joint" type="revolute">
+      <parent link="brHip"/>
+      <child link="brLeg"/>
+      <origin xyz="${legJointOffsetX} ${-legJointOffsetY} 0" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.7"/>
+      <limit lower="${-PI/2}" upper="${PI/2}" effort="${servoeffort}" velocity="${max_vel}" />
+    </joint>
 
   <!-- actuators -->
 
   <transmission name="tran1">
-    <type>position_controllers/JointPositionController</type>
+    <type>transmission_interface/SimpleTransmission</type>
     <joint name="flHip_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor1">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
   <transmission name="tran2">
-    <type>position_controllers/JointPositionController</type>
+    <type>effort_controllers/JointEffortController</type>
     <joint name="frHip_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor2">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
   <transmission name="tran3">
-    <type>position_controllers/JointPositionController</type>
+    <type>transmission_interface/SimpleTransmission</type>
     <joint name="blHip_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor3">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
   <transmission name="tran4">
-    <type>position_controllers/JointPositionController</type>
+    <type>transmission_interface/SimpleTransmission</type>
     <joint name="brHip_joint">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
     </joint>
     <actuator name="motor4">
-      <hardwareInterface>PositionJointInterface</hardwareInterface>
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
   </transmission>
 
+  <!-- leg actuators -->
+  
+  <transmission name="tran5">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="flLeg_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor8">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+  <transmission name="tran6">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="frLeg_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor8">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+
+  <transmission name="tran7">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="blLeg_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor8">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
+
+    <transmission name="tran8">
+    <type>transmission_interface/SimpleTransmission</type>
+    <joint name="brLeg_joint">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+    </joint>
+    <actuator name="motor8">
+      <hardwareInterface>EffortJointInterface</hardwareInterface>
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+  </transmission>
 
 </robot>

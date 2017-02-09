@@ -35,6 +35,10 @@
                         frHip_position_controller
                         blHip_position_controller
                         brHip_position_controller
+                        flLeg_position_controller
+                        frLeg_position_controller
+                        blLeg_position_controller
+                        brLeg_position_controller
                         "/>
 
   <!-- convert joint states to TF transforms for rviz, etc -->

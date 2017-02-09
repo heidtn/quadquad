@@ -67,30 +67,19 @@ class CreepGait(Gait):
     if speed == 0.0 and direction == 0:
       return msg
 
-    rads = math.radians(direction)
+    vel_left = (speed - direction)
+    vel_right = (speed + direction)
 
-    if rads < 3./2.*math.pi and rads > 1./2.*math.pi:
-        modifier = -1.0
-    else:
-        modifier = 1.0
-
-    if rads > 0.0 and rads < math.pi:
-        dirright = math.cos(rads)
-        dirleft = modifier
-    else:
-        dirleft = math.cos(rads)
-        dirright = modifier
-
-    msg.FLHip = (dirleft*speed*self.hip[self.index % len(self.hip)] * .5)*40. + 70
+    msg.FLHip = (vel_left*self.hip[self.index % len(self.hip)] * .5)*40. + 70
     msg.FLLeg = self.leg[self.index % len(self.leg)]*20. + 30
 
-    msg.FRHip = (dirright*speed*self.hip[(self.index + 500) % len(self.hip)] * .5)*40. + 70
+    msg.FRHip = (vel_right*self.hip[(self.index + 500) % len(self.hip)] * .5)*40. + 70
     msg.FRLeg = self.leg[(self.index + 500) % len(self.leg)]*20. + 20
 
-    msg.BLHip = (dirleft*speed*self.hip[(self.index + 500) % len(self.hip)] * .5)*40. + 70
+    msg.BLHip = (vel_left*self.hip[(self.index + 500) % len(self.hip)] * .5)*40. + 70
     msg.BLLeg = self.leg[(self.index + 500) % len(self.leg)]*20. + 20
 
-    msg.BRHip = (dirright*speed*self.hip[(self.index) % len(self.hip)] * .5)*40. + 70
+    msg.BRHip = (vel_right*self.hip[(self.index) % len(self.hip)] * .5)*40. + 70
     msg.BRLeg = self.leg[(self.index) % len(self.leg)]*20. + 35
 
     self.index += 20

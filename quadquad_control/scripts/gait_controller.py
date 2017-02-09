@@ -9,6 +9,12 @@ from threading import Thread, Lock
 
 from gaits import CreepGait
 
+
+"""
+This program creates a thread that continually listens for incoming Twist messages to steer the quad.
+Meanwhile another thread actually writes messages to control the quads motion.
+"""
+
 speed = 0.0
 direction = 0.0
 
